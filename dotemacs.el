@@ -1,3 +1,5 @@
+;;;;; brew install emacs --with-cocoa
+;;;;;   Emacs 24.5
 ;;;; 1) Variables
 (defvar *use-home* (concat (expand-file-name "~") "/"))
 (defvar *plugin-path* (concat *use-home* ".emacs.d/plugins/"))
