@@ -21,7 +21,8 @@
 (defvar *rwork-path* "/path/to/R/workspace/")
 (defvar *lisp-work* "/path/to/lispwd/")
 (defvar *org-path* "/path/to/orgnotes/")
-(setq default-directory *use-home*)
+;; current work directory as `default-directory` by default
+; (setq default-directory *use-home*)
 
 ;;;; 2) Emacs default setup
 ;; Normally, we do not keep backup files

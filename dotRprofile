@@ -7,5 +7,7 @@ local({r <- getOption("repos")
 
 ## startup function
 .First <- function() {
-    source("/path/to/utils.R")
+    # source("/path/to/utils.R")
+    Sys.setenv(LANGUAGE = "C")
+    Sys.setenv(LANG = "C")
 }
