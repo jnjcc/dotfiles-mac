@@ -4,6 +4,8 @@ export TERM="xterm"
 
 export CLICOLOR=1
 export PS1="\u@\H \w\$ "
+## A colored PS1
+# export PS1="\[\e[36m\]\u@\[\e[35m\]\H:\[\e[33m\]\w\[\e[0m\]\$ "
 export EDITOR="vim"
 
 sudobrew() {
