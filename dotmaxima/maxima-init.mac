@@ -1,0 +1,4 @@
+maxima_tempdir:"~/.maxima/plot"$
+gnuplot_command:"/usr/local/bin/gnuplot"$
+draw_command:"/usr/local/bin/gnuplot"$
+set_plot_option([gnuplot_term, qt])$
