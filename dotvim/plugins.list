@@ -1,0 +1,14 @@
+****** common plugins
+* Tagbar 2.6.1 (http://www.vim.org/scripts/script.php?script_id=3465)
+    autoload/tagbar.vim
+    doc/tagbar.txt
+    doc/tags
+    plugin/tagbar.vim
+    syntax/tagbar.vim
+
+* NerdTree 4.2.0 (http://www.vim.org/scripts/script.php?script_id=1658)
+    doc/NERD_tree.txt
+    nerdtree_plugin/exec_menuitem.vim
+    nerdtree_plugin/fs_menu.vim
+    plugin/NERD_tree.vim
+    syntax/nerdtree.vim
