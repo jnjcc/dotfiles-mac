@@ -100,15 +100,14 @@
 ;;;; END Editing }}}
 
 ;;;; 4) Window System {{{
-(if window-system
-    (progn
-      (set-face-attribute 'default nil :height 130)
-      (set-fringe-mode '(1 . 1))
-      (set-background-color "dark slate gray")
-      (set-foreground-color "grey")
-      ;; (global-set-key (kbd "<mouse-3>") 'mouse-popup-menubar-stuff)
-      (global-set-key (kbd "M-RET") 'toggle-frame-fullscreen)
-      (toggle-frame-maximized)))
+(when window-system
+  (set-face-attribute 'default nil :height 130)
+  (set-fringe-mode '(1 . 1))
+  (set-background-color "dark slate gray")
+  (set-foreground-color "grey")
+  ;; (global-set-key (kbd "<mouse-3>") 'mouse-popup-menubar-stuff)
+  (global-set-key (kbd "M-RET") 'toggle-frame-fullscreen)
+  (toggle-frame-maximized))
 ;;;; END Window System }}}
 ;;;;; END Basic Configuration }}}
 
