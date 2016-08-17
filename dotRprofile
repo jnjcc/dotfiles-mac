@@ -1,9 +1,11 @@
 ### ~/.Rprofile
 
 ## set a CRAN mirror
-local({r <- getOption("repos")
-      r["CRAN"] <- "http://cran.rstudio.com"
-      options(repos=r)})
+local({
+    r <- getOption("repos")
+    r["CRAN"] <- "http://cran.rstudio.com"
+    options(repos = r)
+})
 
 ## startup function
 .First <- function() {
@@ -11,3 +13,8 @@ local({r <- getOption("repos")
     Sys.setenv(LANGUAGE = "C")
     Sys.setenv(LANG = "C")
 }
+
+## set Quartz size `help(quartz)`
+setHook(packageEvent("grDevices", "onLoad"),
+        function(...) grDevices::quartz.options(width = 8, height = 6,
+                                                pointsize = 10))
