@@ -197,9 +197,9 @@
   (if (or (looking-back "^\\s-*") (bolp))
       (call-interactively 'lisp-indent-line)
     (call-interactively 'slime-indent-and-complete-symbol)))
+(slime-setup-for-lisp)
 (add-hook 'lisp-mode-hook
           (lambda ()
-            (slime-setup-for-lisp)
             (set (make-local-variable 'lisp-indent-function)
                  'common-lisp-indent-function)
             (define-key lisp-mode-map (kbd "TAB") 'lisp-indent-or-complete)
