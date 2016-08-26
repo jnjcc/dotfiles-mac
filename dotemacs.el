@@ -11,15 +11,16 @@
 
 ;;;; 2) Variables {{{
 (defvar *use-home* (concat (expand-file-name "~") "/"))
-(defvar *plugin-path* (concat *use-home* ".emacs.d/plugins/"))
+(defvar *dot-emacs-path* (concat *use-home* ".emacs.d/"))
+(defvar *plugin-path* (concat *dot-emacs-path* "plugins/"))
 
 ;;; R & ESS path
-(defvar *ess-path* (concat *use-home* ".emacs.d/ess/lisp"))
+(defvar *ess-path* (concat *dot-emacs-path* "ess/lisp"))
 (defvar *r-bin* "/path/to/R")
 (defvar *r-start-args* "--quiet --no-restore-history --no-save ")
 
 ;;; Common Lisp path
-(defvar *cl-path* (concat *use-home* ".emacs.d/common-lisp/"))
+(defvar *cl-path* (concat *dot-emacs-path* "common-lisp/"))
 ;; brew install sbcl
 (defvar *sbcl* "/path/to/sbcl")
 (defvar *slime-path* (concat *cl-path* "slime/"))
@@ -30,6 +31,7 @@
 (defvar *maxima-path* "/usr/local/share/maxima/5.37.2/emacs/")
 
 ;;; getwd() / setwd()
+(defvar *latex-bin* "/Library/TeX/texbin/xelatex")
 (defvar *org-path* "/path/to/org/")
 ;;; Register org file
 (defvar *register-file* (concat *org-path* "daily.org"))
@@ -248,50 +250,62 @@
 ;;; }}}
 
 ;;; Org Mode {{{
-;;;   NOTICE: only turn on Org Mode under window-system
-(defun org-mode-gui-init ()
+(setq latex-run-command *latex-bin*)
+(defun org-mode-init ()
+  ;; do not search hidden text
+  ;;   <M-x show-all> / <S-TAB>
+  (set (make-local-variable 'search-invisible) nil))
+(with-eval-after-load "org"
+  (setq org-directory *org-path*)
+  (setq org-agenda-files *org-agenda-files*)
+  (setq org-startup-indented t)
+  (setq org-hide-emphasis-markers t)
+  ;;; Key mappings
   (global-set-key "\C-cl" 'org-store-link)
   (global-set-key "\C-ca" 'org-agenda)
   (global-set-key "\C-cc" 'org-capture)
   (global-set-key "\C-cb" 'org-iswitchb)
-  (setq org-agenda-files *org-agenda-files*)
-  ;; do not search hidden text
-  ;;   <M-x show-all> / <S-TAB>
-  (set (make-local-variable 'search-invisible) nil)
-  ;; <C-a> moves to fancy place
+  ;;; <C-a> moves to fancy place
   (setq org-special-ctrl-a/e t)
   (setq org-startup-folded t)
-  ;; <M-RET> do not split line on headline & item
+  ;;; <M-RET> do not split line on headline & item
   (setq org-M-RET-may-split-line '((table . t)))
-  ;; Progress logging
+  ;;; Progress logging
   (setq org-log-done 'time)
-  ;; Misc: src font
+  ;;; Misc: src font
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((emacs-lisp . t) (python . t) (R . t)))
   (setq org-src-fontify-natively t)
-  (setq org-src-tab-acts-natively t))
+  (setq org-src-tab-acts-natively t)
+  ;;;; Embedded LaTeX
+  ;;; Special symbols: `org-entities`
+  (setq org-pretty-entities t)
+  (setq org-use-sub-superscripts '{})
+  (if window-system
+      (set-face-attribute 'org-code nil :inherit 'shadow :background "dim gray")
+    (set-face-attribute 'org-hide nil :foreground "black")))
+(add-hook 'org-mode-hook
+          (lambda ()
+            (setq truncate-lines nil)
+            (org-mode-init)
+            ;;; turn on flyspell-mode when editing org files, local to org-mode
+            ;; (add-hook 'read-only-mode-hook
+            ;;           (lambda ()
+            ;;             (if buffer-read-only
+            ;;                 (flyspell-mode 0)
+            ;;               (flyspell-mode t)))
+            ;;           nil 'local)
+            (toggle-read-only)))
 ;;; }}}
 
 ;;; Python {{{
 ;;; }}}
 
 ;;; Window System {{{
-;;;   only turn on maxima & org-mode under window-system
+;;;   only turn on maxima under window-system
 (when window-system
-  (maxima-gui-init)
-
-  (setq org-startup-indented t)
-  (setq org-hide-emphasis-markers t)
-  (add-hook 'org-mode-hook
-            (lambda ()
-              (setq truncate-lines nil)
-              ;; turn on flyspell-mode when editing org files, local to org-mode
-              (add-hook 'read-only-mode-hook
-                        (lambda ()
-                          (if buffer-read-only
-                              (flyspell-mode 0)
-                            (flyspell-mode t)))
-                        nil 'local)
-              (toggle-read-only)
-              (org-mode-gui-init))))
+  (maxima-gui-init))
 ;;; }}}
 ;;;; END Programming Languages }}}
 ;;;;; END Programming }}}
@@ -329,11 +343,4 @@
 
 ;;;;; V) Custom {{{
 ;;; Org-modes <M-x customize-face>
-;;;   `custom-file`
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(org-code ((t (:inherit shadow :background "dim gray")))))
 ;;;;; END Custom
