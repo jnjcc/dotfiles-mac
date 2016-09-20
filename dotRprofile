@@ -10,6 +10,8 @@ local({
 ## startup function
 .First <- function() {
     # source("/path/to/utils.R")
+    library(ggplot2)
+    Sys.setlocale("LC_ALL", "zh_CN.UTF-8")
     Sys.setenv(LANGUAGE = "C")
     Sys.setenv(LANG = "C")
 }

@@ -284,5 +284,5 @@ endfun
 """"" END Utility Functions }}}
 
 """"" V) Miscellaneous {{{
-
+" set relativenumber
 """"" END Miscellaneous }}}

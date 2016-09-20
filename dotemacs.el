@@ -162,6 +162,7 @@
 (require 'ess-site)
 (setq inferior-R-args *r-start-args*)
 (setq inferior-R-program-name *r-bin*)
+(setq ess-history-directory *use-home*)
 (setq ess-ask-for-ess-directory nil)
 (ess-toggle-underscore nil)
 (add-hook 'R-mode-hook
