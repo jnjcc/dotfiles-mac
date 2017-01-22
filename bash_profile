@@ -8,6 +8,8 @@ export PS1="\u@\H \w\$ "
 # export PS1="\[\e[36m\]\u@\[\e[35m\]\H:\[\e[33m\]\w\[\e[0m\]\$ "
 export EDITOR="vim"
 
+export TZ=":Pacific/Auckland"
+
 sudobrew() {
     BREW=`which brew`
     UGRP=$(ls -lh ${BREW} | awk -F' ' '{ print $3":"$4 }')

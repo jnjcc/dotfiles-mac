@@ -290,6 +290,12 @@
           (lambda ()
             (setq truncate-lines nil)
             (org-mode-init)
+            ;;; #+Time-stamp: <>
+            (add-hook 'before-save-hook
+                      (lambda ()
+                        (setq time-stamp-format "%:y-%02m-%02d %02H:%02M:%02S")
+                        (time-stamp))
+                      nil 'local)
             ;;; turn on flyspell-mode when editing org files, local to org-mode
             ;; (add-hook 'read-only-mode-hook
             ;;           (lambda ()
