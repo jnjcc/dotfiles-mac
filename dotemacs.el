@@ -109,7 +109,11 @@
   (set-foreground-color "grey")
   ;; (global-set-key (kbd "<mouse-3>") 'mouse-popup-menubar-stuff)
   (global-set-key (kbd "M-RET") 'toggle-frame-fullscreen)
-  (toggle-frame-maximized))
+  (toggle-frame-maximized)
+  (let ((path-from-shell
+         (shell-command-to-string "$SHELL -l -i -c 'echo $PATH'")))
+    (setenv "PATH" path-from-shell)
+    (setq exec-path (split-string path-from-shell path-separator))))
 ;;;; END Window System }}}
 ;;;;; END Basic Configuration }}}
 
@@ -307,6 +311,24 @@
 ;;; }}}
 
 ;;; Python {{{
+;; (require 'package)
+;; (add-to-list 'package-archives
+;;              '("elpy" . "https://jorgenschaefer.github.io/packages/"))
+;; <M-x package-install RET elpy RET>
+(defun ipython-elpy-init ()
+  (package-initialize)
+  (elpy-enable)
+  ;; conda install ipython=4.2.0
+  (elpy-use-ipython)
+  (setq python-shell-interpreter "ipython")
+  ;; IPython 5.0:
+  ;;   The new terminal interface is not compatible with
+  ;;   Emacs 'inferior-shell' feature
+  ;;   This ruins tab-completion, though
+  ;; (setq python-shell-interpreter-args "--simple-prompt")
+  (run-python (python-shell-parse-command)))
+(add-hook 'python-mode-hook
+          'ipython-elpy-init)
 ;;; }}}
 
 ;;; Window System {{{
