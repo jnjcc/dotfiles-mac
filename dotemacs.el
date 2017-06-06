@@ -32,7 +32,10 @@
 
 ;;; getwd() / setwd()
 (defvar *latex-bin* "/Library/TeX/texbin/xelatex")
+;;; <C-c a L>: timeline for current buffer
 (defvar *org-path* "/path/to/org/")
+;;; <M-x calendar> `d': diary for current day
+(defvar *diary-file* (concat *org-path* "diary.org"))
 ;;; Register org file
 (defvar *register-file* (concat *org-path* "daily.org"))
 (set-register ?d '(file . *register-file*))
@@ -256,6 +259,9 @@
 
 ;;; Org Mode {{{
 (setq latex-run-command *latex-bin*)
+(with-eval-after-load "calendar"
+  (setq diary-file *diary-file*)
+  (calendar-set-date-style 'iso))
 (defun org-mode-init ()
   ;; do not search hidden text
   ;;   <M-x show-all> / <S-TAB>
@@ -315,12 +321,12 @@
 ;; (add-to-list 'package-archives
 ;;              '("elpy" . "https://jorgenschaefer.github.io/packages/"))
 ;; <M-x package-install RET elpy RET>
+(setq python-shell-interpreter "ipython")
 (defun ipython-elpy-init ()
   (package-initialize)
   (elpy-enable)
   ;; conda install ipython=4.2.0
   (elpy-use-ipython)
-  (setq python-shell-interpreter "ipython")
   ;; IPython 5.0:
   ;;   The new terminal interface is not compatible with
   ;;   Emacs 'inferior-shell' feature
