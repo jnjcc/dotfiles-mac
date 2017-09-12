@@ -30,7 +30,14 @@
 ;;; Maxima path
 (defvar *maxima-path* "/usr/local/share/maxima/5.37.2/emacs/")
 
-;;; getwd() / setwd()
+;;; Org path
+;; org-reveal needs `org-export-get-reference'
+;;   http://orgmode.org/org-9.1.tar.gz
+(defvar *org-latest* (concat *plugin-path* "org-9.1/lisp/"))
+(defvar *htmlize-path* (concat *dot-emacs-path* "htmlize/"))
+;;   https://github.com/hakimel/reveal.js/
+(defvar *reveal-js-path* (concat "file://" *htmlize-path* "reveal.js/"))
+;; getwd() / setwd()
 (defvar *latex-bin* "/Library/TeX/texbin/xelatex")
 ;;; <C-c a L>: timeline for current buffer
 (defvar *org-path* "/path/to/org/")
@@ -258,6 +265,7 @@
 ;;; }}}
 
 ;;; Org Mode {{{
+(setq load-path (append (list *org-latest*) load-path))
 (setq latex-run-command *latex-bin*)
 (with-eval-after-load "calendar"
   (setq diary-file *diary-file*)
@@ -265,7 +273,8 @@
 (defun org-mode-init ()
   ;; do not search hidden text
   ;;   <M-x show-all> / <S-TAB>
-  (set (make-local-variable 'search-invisible) nil))
+  (set (make-local-variable 'search-invisible) nil)
+  (set (make-local-variable 'case-fold-search) t))
 (with-eval-after-load "org"
   (setq org-directory *org-path*)
   (setq org-agenda-files *org-agenda-files*)
@@ -361,14 +370,20 @@
 ;;;; }}}
 
 ;;;; 3) sr-speedbar {{{
-(require 'sr-speedbar)
-(setq sr-speedbar-right-side nil)
-(setq sr-speedbar-skip-other-window-p t)
-(setq sr-speedbar-auto-refresh t)
-(setq sr-speedbar-max-width 30)
-(setq speedbar-show-unknown-files t)
-(setq speedbar-tag-hierarchy-method '(speedbar-prefix-group-tag-hierarchy))
-(setq speedbar-sort-tags t)
+;;; NOTICE: sr-speedbar does not work under Emacs 25.3.1
+;; (require 'sr-speedbar)
+;; (setq sr-speedbar-right-side nil)
+;; (setq sr-speedbar-skip-other-window-p t)
+;; (setq sr-speedbar-auto-refresh t)
+;; (setq sr-speedbar-max-width 30)
+;; (setq speedbar-show-unknown-files t)
+;; (setq speedbar-tag-hierarchy-method '(speedbar-prefix-group-tag-hierarchy))
+;; (setq speedbar-sort-tags t)
+;;;; }}}
+
+;;;; 4) org-reveal {{{
+(require 'ox-reveal)
+(setq org-reveal-root *reveal-js-path*)
 ;;;; }}}
 ;;;;; END Plugins }}}
 
