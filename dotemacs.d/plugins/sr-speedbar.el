@@ -312,7 +312,7 @@ Default is nil."
   :type 'boolean
   :set (lambda (symbol value)
          (set symbol value)
-         (if (and (>= emacs-major-version 24) (>= emacs-minor-version 4))
+         (if (>= emacs-major-version 24)
              (when (ad-is-advised 'other-window)
                    (sr-speedbar-handle-other-window-advice value))
            (when (ad-advised-definition-p 'other-window)

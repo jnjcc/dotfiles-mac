@@ -31,6 +31,7 @@
 (defvar *maxima-path* "/usr/local/share/maxima/5.37.2/emacs/")
 
 ;;; Org path
+;;; <C-c / t> for all TODOs
 ;; org-reveal needs `org-export-get-reference'
 ;;   http://orgmode.org/org-9.1.tar.gz
 (defvar *org-latest* (concat *plugin-path* "org-9.1/lisp/"))
@@ -63,6 +64,7 @@
 
 (fset 'yes-or-no-p 'y-or-n-p)
 (setq inhibit-startup-message t)
+(ido-mode 'buffers)
 
 ;;; Mode line: we want `buffer-name` + `default-directory`...
 (setq-default mode-line-buffer-identification
@@ -299,7 +301,7 @@
   (setq org-src-fontify-natively t)
   (setq org-src-tab-acts-natively t)
   ;;;; Embedded LaTeX
-  ;;; Special symbols: `org-entities`
+  ;;; Special symbols: `org-entities`; <C-c C-x \> to toggle
   (setq org-pretty-entities t)
   (setq org-use-sub-superscripts '{})
   (if window-system
@@ -326,24 +328,39 @@
 ;;; }}}
 
 ;;; Python {{{
+(setq python-shell-interpreter "ipython")
 ;; (require 'package)
 ;; (add-to-list 'package-archives
 ;;              '("elpy" . "https://jorgenschaefer.github.io/packages/"))
 ;; <M-x package-install RET elpy RET>
-(setq python-shell-interpreter "ipython")
-(defun ipython-elpy-init ()
-  (package-initialize)
-  (elpy-enable)
-  ;; conda install ipython=4.2.0
-  (elpy-use-ipython)
-  ;; IPython 5.0:
-  ;;   The new terminal interface is not compatible with
-  ;;   Emacs 'inferior-shell' feature
-  ;;   This ruins tab-completion, though
-  ;; (setq python-shell-interpreter-args "--simple-prompt")
-  (run-python (python-shell-parse-command)))
+;; (defun ipython-elpy-init ()
+;;   (package-initialize)
+;;   (elpy-enable)
+;;   ;; conda install ipython=4.2.0
+;;   (elpy-use-ipython)
+;;   ;; IPython 5.0:
+;;   ;;   The new terminal interface is not compatible with
+;;   ;;   Emacs 'inferior-shell' feature
+;;   ;;   This ruins tab-completion, though
+;;   ;; (setq python-shell-interpreter-args "--simple-prompt")
+;;   (run-python (python-shell-parse-command)))
+;; (add-hook 'python-mode-hook
+;;           'ipython-elpy-init)
+
+;; (add-to-list 'package-archives
+;;              '("melpa" . "https://melpa.org/packages/"))
+;; (package-initialize)
+;; <M-x package-install RET anaconda-mode RET>
+(defun anaconda-init ()
+  (subword-mode t)
+  (anaconda-mode t)
+  (eldoc-mode t)
+  ;; <C-c C-r>: <python-shell-send-region>
+  ;; <C-c C-p>: <run-python>
+  ;; (run-python (python-shell-parse-command))
+  )
 (add-hook 'python-mode-hook
-          'ipython-elpy-init)
+          'anaconda-init)
 ;;; }}}
 
 ;;; Window System {{{
@@ -370,15 +387,15 @@
 ;;;; }}}
 
 ;;;; 3) sr-speedbar {{{
-;;; NOTICE: sr-speedbar does not work under Emacs 25.3.1
-;; (require 'sr-speedbar)
-;; (setq sr-speedbar-right-side nil)
-;; (setq sr-speedbar-skip-other-window-p t)
-;; (setq sr-speedbar-auto-refresh t)
-;; (setq sr-speedbar-max-width 30)
-;; (setq speedbar-show-unknown-files t)
-;; (setq speedbar-tag-hierarchy-method '(speedbar-prefix-group-tag-hierarchy))
-;; (setq speedbar-sort-tags t)
+;;; <M-x sr-speedbar-toggle> / <M-x sr-speedbar-open>
+(require 'sr-speedbar)
+(setq sr-speedbar-right-side nil)
+(setq sr-speedbar-skip-other-window-p t)
+(setq sr-speedbar-auto-refresh t)
+(setq sr-speedbar-max-width 30)
+(setq speedbar-show-unknown-files t)
+(setq speedbar-tag-hierarchy-method '(speedbar-prefix-group-tag-hierarchy))
+(setq speedbar-sort-tags t)
 ;;;; }}}
 
 ;;;; 4) org-reveal {{{
