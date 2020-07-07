@@ -28,7 +28,8 @@
 (setq common-lisp-hyperspec-root (concat *cl-path* "docs/HyperSpec/"))
 
 ;;; Maxima path
-(defvar *maxima-path* "/usr/local/share/maxima/5.37.2/emacs/")
+;; brew install maxima
+(defvar *maxima-path* "/usr/local/share/emacs/site-lisp/maxima/")
 
 ;;; Org path
 ;;; <C-c / t> for all TODOs
@@ -81,13 +82,13 @@
 
 ;;; Using Multiple Buffers
 ;; Fast minibuffer selection
-; (icomplete-mode)
+;; (icomplete-mode)
 ;; `completion-ignored-extensions`
 ;;;; END Reading }}}
 
 ;;;; 2) Searching {{{
 ;;; Searching and Replacement
-; (setq search-whitespace-regexp nil)
+;; (setq search-whitespace-regexp nil)
 ;; Searching and Case
 (setq-default case-fold-search nil)
 ;;;; END Searching }}}
@@ -108,8 +109,8 @@
 (delete-selection-mode t)
 
 ;;; Encoding {{{
-; (setq default-buffer-file-coding-system 'utf-8)
-(modify-coding-system-alist 'file "\\.txt\\'" 'chinese-gbk)
+;; (setq default-buffer-file-coding-system 'utf-8)
+;; (modify-coding-system-alist 'file "\\.txt\\'" 'chinese-gbk)
 ;;; }}}
 ;;;; END Editing }}}
 
@@ -134,7 +135,7 @@
 (global-font-lock-mode t)
 
 ;;; Useless Whitespace
-; (setq-default indicate-empty-lines t)
+;; (setq-default indicate-empty-lines t)
 ;; for <M-x whitespace-mode>
 (setq whitespace-style '(face trailing tabs tab-mark newline newline-mark))
 
@@ -204,7 +205,7 @@
   (setq inferior-lisp-program *sbcl*)
   (setq slime-lisp-implementations
         `((sbcl (,*sbcl*) :coding-system utf-8-unix)
-          ; (clisp (,*clisp*) :coding-system utf-8-unix)
+          ;; (clisp (,*clisp*) :coding-system utf-8-unix)
           ))
   (slime-setup '(slime-fancy))
   (add-hook 'slime-mode-hook
@@ -223,31 +224,26 @@
                  'common-lisp-indent-function)
             (define-key lisp-mode-map (kbd "TAB") 'lisp-indent-or-complete)
             (define-key lisp-mode-map "\C-r" 'forward-char)
-            ; (setq browse-url-browser-function 'browse-url-generic
-            ;       browse-url-generic-program "google-chrome")
+            ;; (setq browse-url-browser-function 'browse-url-generic
+            ;;       browse-url-generic-program "google-chrome")
             ))
 ;;; }}}
 
 ;;; Maxima {{{
 ;;;   NOTICE: only turn on maxima under window-system
 ;;;
-;;;   Install maxima:
-;;;     1) brew tap homebrew/science && brew update
-;;;        brew install homebrew/science/maxima
-;;;        brew uninstall gnuplot
-;;;        ## for plot2d() & draw2d()
-;;;        brew install gnuplot --with-qt --with-x11
-;;;     2) http://maxima.sourceforge.net/
+;;;   Install maxima <M-x maixma> / <M-x imaxima>:
+;;;     1) brew install maxima
+;;;     2) brew cask install basictex
+;;;     3) brew install ghostscript
 ;;;
 ;;;   https://sites.google.com/site/imaximaimath/
 (defun maxima-gui-init ()
   (setq exec-path
         (append
          (list
-          ;; BasicTex: <http://pages.uoregon.edu/koch/>
-          "/usr/texbin"
-          ;; Ghostscript: <http://pages.uoregon.edu/koch/>>
-          "/usr/local/bin")
+          "/Library/TeX/texbin" ;; BasicTex tex
+          "/usr/local/bin") ;; Ghostscript gs and gnuplot
          exec-path))
   ;; NOTICE: `rmaxima` with SBCL
   (setq imaxima-maxima-program "maxima")
@@ -267,14 +263,14 @@
 ;;; }}}
 
 ;;; Org Mode {{{
-(setq load-path (append (list *org-latest*) load-path))
+;; (setq load-path (append (list *org-latest*) load-path))
 (setq latex-run-command *latex-bin*)
 (with-eval-after-load "calendar"
   (setq diary-file *diary-file*)
   (calendar-set-date-style 'iso))
 (defun org-mode-init ()
   ;; do not search hidden text
-  ;;   <M-x show-all> / <S-TAB>
+  ;;   <M-x show-all> / <S-TAB> / <C-2 S-TAB>
   (set (make-local-variable 'search-invisible) nil)
   (set (make-local-variable 'case-fold-search) t))
 (with-eval-after-load "org"
@@ -328,24 +324,23 @@
 ;;; }}}
 
 ;;; Python {{{
-(setq python-shell-interpreter "ipython")
-;; (require 'package)
-;; (add-to-list 'package-archives
-;;              '("elpy" . "https://jorgenschaefer.github.io/packages/"))
+(require 'package)
+(add-to-list 'package-archives
+             '("melpa" . "https://melpa.org/packages/"))
 ;; <M-x package-install RET elpy RET>
-;; (defun ipython-elpy-init ()
-;;   (package-initialize)
-;;   (elpy-enable)
-;;   ;; conda install ipython=4.2.0
-;;   (elpy-use-ipython)
-;;   ;; IPython 5.0:
-;;   ;;   The new terminal interface is not compatible with
-;;   ;;   Emacs 'inferior-shell' feature
-;;   ;;   This ruins tab-completion, though
-;;   ;; (setq python-shell-interpreter-args "--simple-prompt")
-;;   (run-python (python-shell-parse-command)))
-;; (add-hook 'python-mode-hook
-;;           'ipython-elpy-init)
+;; - .emacs.d/elpa/{helm-core,avy,popup,async,elpygen,elpy}
+;; - .emacs.d/rpc-venv/
+(package-initialize)
+(elpy-enable)
+(setq elpy-shell-echo-input nil
+      ;; elpy-shell-echo-output nil
+      python-shell-interpreter "ipython"
+      ;; https://elpy.readthedocs.io/en/latest/ide.html#interpreter-setup
+      ;; https://github.com/jorgenschaefer/elpy/issues/1550
+      python-shell-interpreter-args "--simple-prompt -c exec('__import__(\\'readline\\')') -i")
+(add-hook 'python-mode-hook
+          (lambda ()
+            (run-python (python-shell-parse-command))))
 
 ;; (add-to-list 'package-archives
 ;;              '("melpa" . "https://melpa.org/packages/"))
@@ -359,8 +354,8 @@
   ;; <C-c C-p>: <run-python>
   ;; (run-python (python-shell-parse-command))
   )
-(add-hook 'python-mode-hook
-          'anaconda-init)
+;; (add-hook 'python-mode-hook
+;;           'anaconda-init)
 ;;; }}}
 
 ;;; Window System {{{
@@ -374,10 +369,10 @@
 ;;;;; III) Plugins {{{
 (setq load-path (append (list *plugin-path*) load-path))
 ;;;; 1) linum {{{
-; (add-hook 'linum-before-numbering-hook
-;           (lambda ()
-;             (setq linum-format "%d ")))
-; (global-linum-mode 1)
+;; (add-hook 'linum-before-numbering-hook
+;;           (lambda ()
+;;             (setq linum-format "%d ")))
+;; (global-linum-mode 1)
 ;;;; }}}
 
 ;;;; 2) taglist {{{
@@ -399,13 +394,14 @@
 ;;;; }}}
 
 ;;;; 4) org-reveal {{{
-(require 'ox-reveal)
-(setq org-reveal-root *reveal-js-path*)
+;; (require 'ox-reveal)
+;; (setq org-reveal-root *reveal-js-path*)
 ;;;; }}}
 ;;;;; END Plugins }}}
 
 ;;;;; IV) Miscellaneous {{{
-
+(when window-system
+  (find-file *register-file*))
 ;;;;; END Miscellaneous }}}
 
 ;;;;; V) Custom {{{
