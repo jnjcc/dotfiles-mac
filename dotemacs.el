@@ -30,6 +30,10 @@
 ;;; Maxima path
 ;; brew install maxima
 (defvar *maxima-path* "/usr/local/share/emacs/site-lisp/maxima/")
+(defvar *window-default-bg-color* "dark slate gray")
+(defvar *window-default-fg-color* "grey")
+(defvar *window-maxima-bg-color* "grey")
+(defvar *window-maxima-fg-color* "black")
 
 ;;; Org path
 ;;; <C-c / t> for all TODOs
@@ -115,11 +119,15 @@
 ;;;; END Editing }}}
 
 ;;;; 4) Window System {{{
+(defun reset-default-color ()
+  (interactive)
+  (set-background-color *window-default-bg-color*)
+  (set-foreground-color *window-default-fg-color*))
+
 (when window-system
   (set-face-attribute 'default nil :height 130)
   (set-fringe-mode '(1 . 1))
-  (set-background-color "dark slate gray")
-  (set-foreground-color "grey")
+  (reset-default-color)
   ;; (global-set-key (kbd "<mouse-3>") 'mouse-popup-menubar-stuff)
   (global-set-key (kbd "M-RET") 'toggle-frame-fullscreen)
   (toggle-frame-maximized)
@@ -232,12 +240,19 @@
 ;;; Maxima {{{
 ;;;   NOTICE: only turn on maxima under window-system
 ;;;
-;;;   Install maxima <M-x maixma> / <M-x imaxima>:
+;;;   Install maxima <M-x maxima> / <M-x imaxima>:
 ;;;     1) brew install maxima
 ;;;     2) brew cask install basictex
 ;;;     3) brew install ghostscript
 ;;;
 ;;;   https://sites.google.com/site/imaximaimath/
+(defun reset-maxima-color ()
+  (interactive)
+  (modify-frame-parameters (selected-frame)
+                           (list (cons 'foreground-color *window-maxima-fg-color*)
+                                 (cons 'background-color *window-maxima-bg-color*)
+                                 (cons 'imaxima-equation-color *window-maxima-fg-color*))))
+
 (defun maxima-gui-init ()
   (setq exec-path
         (append
@@ -258,7 +273,13 @@
 
   (setq imaxima-use-maxima-mode-flag t)
   (setq maxima-use-dynamic-complete t)
-  ;; <M-x imaxima>
+  ;; <M-x imaxima-print-buffer>
+  (setq imaxima-print-tex-command "latex %s; dvipdf %s.dvi imax.pdf; open imax.pdf")
+  (setq imaxima-bg-color *window-maxima-bg-color*)
+  (setq imaxima-fg-color *window-maxima-fg-color*)
+  (setq imaxima-equation-color *window-maxima-fg-color*)
+  (setq imaxima-pt-size 12)
+  (setq imaxima-fnt-size "Large")
   (setq imaxima-gs-program "gs"))
 ;;; }}}
 
